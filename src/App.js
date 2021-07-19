@@ -7,6 +7,7 @@ import {configureWeb3} from "./blockchain-helper";
 function App() {
     const [state, setState] = useState({
         web3: null,
+        connectedAccounts: [],
         selectedAddress: '',
         fromAddress: '[from address]',
         toAddress: '',
@@ -43,7 +44,7 @@ function App() {
 
                     <div className="row g-5">
                         <div className="col-md-12">
-                            <h4 className="mb-3">Functions</h4>
+                            <h4 className="mb-3">Functions (open your browser console for the results)</h4>
                             <div>
                                 <code>
                                     [web3 initialization]
@@ -66,7 +67,7 @@ function App() {
                             <hr/>
                             <div>
                                 <code>
-                                    [requesting accounts]
+                                    [Requests accounts access from metamask/request permission to connect to metamask account]
                                     <br/>
                                     window.web3.eth.requestAccounts()
                                     <button className="submit btn btn-flat btn-primary float-end"
@@ -74,7 +75,9 @@ function App() {
                                             disabled={!state.web3}
                                             onClick={async () => {
                                                 window.connectedAccounts = await window.web3.eth.requestAccounts();
-                                                console.log("Accounts retrieved, type 'connectedAccounts' in the console")
+                                                _setState('connectedAccounts', window.connectedAccounts);
+                                                console.log(window.connectedAccounts)
+                                                console.log("Metamask connected")
                                                 console.log('===========================================================================')
                                             }}
                                     >Run</button>
@@ -83,10 +86,10 @@ function App() {
                             <hr/>
                             <div>
                                 <code>
-                                    [Shows the currently selected address]
+                                    [Shows the currently selected address, please run requestAccounts first if this returns null]
                                     <br/>
                                     window.web3.eth.currentProvider.selectedAddress
-                                    <button className="submit btn btn-flat btn-primary float-end"
+                                    <button className={"submit btn btn-flat btn-primary float-end " + (state.connectedAccounts.length? '': 'disabled')}
                                             type="button"
                                             onClick={() => {
                                                 window.selectedAddress = window.web3.eth.currentProvider.selectedAddress;
