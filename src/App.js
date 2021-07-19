@@ -1,14 +1,21 @@
 import logo from './logo.svg';
 import web3logo from './images/web3jslogo.png';
 import './App.css';
-import Web3PlayGround from "./blockchain/Web3PlayGround";
 import {useState} from "react";
+import {configureWeb3} from "./blockchain-helper";
 
-function App(props) {
+function App() {
     const [state, setState] = useState({
-        web3Initialized: false,
+        web3: null,
+        selectedAddress: '',
+        fromAddress: '[from address]',
+        toAddress: '',
+        amountToSendInEther: '',
+        valueInWei: '',
+        valueInEther: '',
+        address: '',
         contractAddress: '',
-        contractABI: ''
+        contractABI: '',
     })
 
     function _setState(name, value) {
@@ -20,7 +27,6 @@ function App(props) {
         _setState(name, value);
     }
 
-    const playGround = new Web3PlayGround(props.web3Connection);
     return (
         <>
             <div className="container">
@@ -31,7 +37,8 @@ function App(props) {
                             <img className="mx-auto mb-4" src={web3logo} alt="" width="72" height="57"/>
                         </div>
                         <h2>Web3js Playground</h2>
-                        <p className="lead">Some of functions you will encounter throughout the course, please open browser console for the results</p>
+                        <p className="lead">Some of functions you will encounter throughout the course, please open
+                            browser console for the results</p>
                     </div>
 
                     <div className="row g-5">
@@ -39,12 +46,19 @@ function App(props) {
                             <h4 className="mb-3">Functions</h4>
                             <div>
                                 <code>
-                                    const web3Obj = new Web3(window.ethereum)
-                                    <button className="submit btn btn-flat btn-primary float-end"
-                                            type="button"
-                                            onClick={async () => {
-                                                _setState('web3Initialized', !!playGround.initializeWeb3());
-                                            }}
+                                    [web3 initialization]
+                                    <br/>
+                                    window.web3 = configureWeb3();
+                                    <button
+                                        className={"submit btn btn-flat btn-primary float-end " + (!state.web3 ? '' : 'disabled')}
+                                        type="button"
+                                        onClick={async () => {
+                                            // let's expose web3 to the browser
+                                            window.web3 = configureWeb3();
+                                            console.log("Web3 object created, type window.web3 in the console")
+                                            console.log('===========================================================================')
+                                            _setState('web3', window.web3);
+                                        }}
                                     >Run
                                     </button>
                                 </code>
@@ -52,12 +66,16 @@ function App(props) {
                             <hr/>
                             <div>
                                 <code>
-                                    web3Obj.eth.requestAccounts()
+                                    [requesting accounts]
+                                    <br/>
+                                    window.web3.eth.requestAccounts()
                                     <button className="submit btn btn-flat btn-primary float-end"
                                             type="submit"
-                                            disabled={!state.web3Initialized}
-                                            onClick={() => {
-                                                playGround.requestAccounts();
+                                            disabled={!state.web3}
+                                            onClick={async () => {
+                                                window.connectedAccounts = await window.web3.eth.requestAccounts();
+                                                console.log("Accounts retrieved, type 'connectedAccounts' in the console")
+                                                console.log('===========================================================================')
                                             }}
                                     >Run</button>
                                 </code>
@@ -65,54 +83,192 @@ function App(props) {
                             <hr/>
                             <div>
                                 <code>
-                                    web3Obj.eth.currentProvider.selectedAddress
+                                    [Shows the currently selected address]
+                                    <br/>
+                                    window.web3.eth.currentProvider.selectedAddress
                                     <button className="submit btn btn-flat btn-primary float-end"
                                             type="button"
                                             onClick={() => {
-                                                playGround.selectedAddress()
+                                                window.selectedAddress = window.web3.eth.currentProvider.selectedAddress;
+                                                console.log(window.selectedAddress)
+                                                _setState('selectedAddress', window.selectedAddress);
+                                                _setState('fromAddress', window.selectedAddress);
+                                                console.log("Type 'selectedAddress' in the console")
+                                                console.log('===========================================================================')
                                             }}
-                                            disabled={!state.web3Initialized}>Run
+                                            disabled={!state.web3}>Run
                                     </button>
                                 </code>
                             </div>
                             <hr/>
                             <div>
+                                <form>
+                                    <code>
+                                        [get the eth balance]
+                                        <br/>
+                                        window.web3.eth.balanceOf('
+                                        <input onChange={onChange}
+                                               type="text"
+                                               className=""
+                                               name="address"
+                                               value={state.address}
+                                               required
+                                               placeholder={"address"}/>
+                                        ')
+                                        <button className={"submit btn btn-flat btn-primary float-end " + (state.address ? '' : 'disabled')}
+                                                type="button"
+                                                onClick={() => {
+                                                    window.web3.eth.getBalance(state.address).then(console.log)
+                                                    console.log("This is the balance in wei form, to convert to ")
+                                                    console.log('===========================================================================')
+                                                }}
+                                                disabled={!state.web3}>Run
+                                        </button>
+                                    </code>
+                                </form>
+                            </div>
+                            <hr/>
+                            <div>
+                                <form>
+                                    <code>
+                                        [converts wei to ether for it to makes sense in the real world, always pass
+                                        values as strings or BN objects]
+                                        <br/>
+                                        window.web3.utils.fromWei('
+                                        <input onChange={onChange}
+                                               type="text"
+                                               className=""
+                                               name="valueInWei"
+                                               value={state.valueInWei}
+                                               required
+                                               placeholder={"value in wei"}/>
+                                        ')
+                                        <button className={"submit btn btn-flat btn-primary float-end " + (state.valueInWei ? '': 'disabled')}
+                                                type="button"
+                                                onClick={() => {
+                                                    console.log("This is the value in ether")
+                                                    console.log(window.web3.utils.fromWei(state.valueInWei))
+                                                    console.log('===========================================================================')
+                                                }}
+                                                disabled={!state.web3}>Run
+                                        </button>
+                                    </code>
+                                </form>
+                            </div>
+                            <hr/>
+                            <div>
+                                <form>
+                                    <code>
+                                        [converts ether to wei for it to makes sense in the blockchain]
+                                        <br/>
+                                        window.web3.utils.toWei('
+                                        <input onChange={onChange}
+                                               type="text"
+                                               className=""
+                                               name="valueInEther"
+                                               value={state.valueInEther}
+                                               required
+                                               placeholder={"value in ether"}/>
+                                        ')
+                                        <button className={"submit btn btn-flat btn-primary float-end " + (state.valueInEther? '' : 'disabled')}
+                                                type="button"
+                                                onClick={() => {
+                                                    console.log("This is the value in wei")
+                                                    console.log(window.web3.utils.toWei(state.valueInEther))
+                                                    console.log('===========================================================================')
+                                                }}
+                                                disabled={!state.web3}>Run
+                                        </button>
+                                    </code>
+                                </form>
+                            </div>
+                            <hr/>
+                            <div>
                                 <code>
-                                    web3Obj.eth.utils
+                                    [All the utilities from web3 object]
+                                    <br/>
+                                    web3.utils
                                     <button className="submit btn btn-flat btn-primary float-end"
                                             type="button"
                                             onClick={() => {
-                                                playGround.showUtils()
+                                                console.log(window.web3.utils)
+                                                console.log('Type web3.utils in the console')
+                                                console.log('===========================================================================')
                                             }}
-                                            disabled={!state.web3Initialized}>Run
+                                            disabled={!state.web3}>Run
                                     </button>
                                 </code>
                             </div>
                             <hr/>
-                            <form className="needs-validation" noValidate>
+                            <form>
                                 <code>
-                                    const contract = new web3Obj.eth.Contract(
-                                    <textarea name="contractABI"
-                                              className={'align-middle'}
-                                              rows={1}
-                                              onChange={onChange}
-                                              placeholder={'contract ABI'}
-                                              value={state.contractABI}>
-                                    </textarea>,
-                                    <input onChange={onChange}
-                                           type="text"
-                                           className=""
-                                           name="contractAddress"
-                                           value={state.contractAddress}
-                                           required
-                                           placeholder={"contract address"}/>
+                                    [initializing a smart contract]
+                                    <br/>
+                                    window.contract = new web3.eth.Contract(
+                                    '<textarea name="contractABI"
+                                               className={'align-middle'}
+                                               rows={1}
+                                               onChange={onChange}
+                                               placeholder={'contract ABI'}
+                                               value={state.contractABI}>
+                                    </textarea>',
+                                    '<input onChange={onChange}
+                                            type="text"
+                                            className=""
+                                            name="contractAddress"
+                                            value={state.contractAddress}
+                                            required
+                                            placeholder={"contract address"}/>'
                                     )
-                                    <button className="submit btn btn-flat btn-primary float-end"
+                                    <button className={"submit btn btn-flat btn-primary float-end " + (state.contractABI && state.contractAddress? '': 'disabled')}
                                             type="button"
                                             onClick={() => {
-                                                playGround.initContract(state.contractABI, state.contractAddress)
+                                                const ABI = JSON.parse(state.contractABI);
+                                                const contract = new window.web3.eth.Contract(ABI, state.contractAddress)
+                                                window.contract = contract
+                                                console.log(contract);
+                                                console.log("Contract object has been created, type 'contract' in the console to access")
+                                                console.log('===========================================================================')
                                             }}
-                                            disabled={!state.web3Initialized}>Run
+                                            disabled={!state.web3}>Run
+                                    </button>
+                                </code>
+                            </form>
+                            <hr/>
+                            <form>
+                                <code>
+                                    [sending a transaction from metamask, click run on window.web3.eth.currentProvider.selectedAddress first, it will set the fromAddress]
+                                    <br/>
+                                    window.web3.eth.sendTransaction(
+                                    '{state.fromAddress}',
+                                    '<input onChange={onChange}
+                                            type="text"
+                                            className=""
+                                            name="toAddress"
+                                            value={state.toAddress}
+                                            required
+                                            placeholder={"enter recipient address"}/>',
+                                    '<input onChange={onChange}
+                                            type="text"
+                                            className=""
+                                            name="amountToSendInEther"
+                                            value={state.amountToSendInEther}
+                                            required
+                                            placeholder={"enter amount to send in ether"}/>'
+,                                    )
+                                    <button className={"submit btn btn-flat btn-primary float-end " + (state.fromAddress && state.toAddress && state.amountToSendInEther? '': 'disabled')}
+                                            type="button"
+                                            onClick={() => {
+                                                window.web3.eth.sendTransaction({
+                                                    from: state.fromAddress,
+                                                    to: state.toAddress,
+                                                    value: window.web3.utils.toWei(state.amountToSendInEther),
+                                                }).then(console.log);
+
+                                                console.log("Contract object has been created, type 'contract' in the console to access")
+                                                console.log('===========================================================================')
+                                            }}
+                                            disabled={!state.web3}>Run
                                     </button>
                                 </code>
                             </form>
