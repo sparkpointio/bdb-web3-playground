@@ -1,5 +1,6 @@
-import logo from './logo.svg';
+import logo from './images/logo.svg';
 import web3logo from './images/web3jslogo.png';
+import configureWeb3Code from './images/configureWeb3Code.png';
 import './App.css';
 import {useState} from "react";
 import {configureWeb3} from "./blockchain-helper";
@@ -47,9 +48,11 @@ function App() {
                             <h4 className="mb-3">Functions (open your browser console for the results)</h4>
                             <div>
                                 <code>
-                                    [web3 initialization]
+                                    [Initialize Web3, before anything else, let's use a custom function for this one]
                                     <br/>
                                     window.web3 = configureWeb3();
+                                    <br/>
+                                    <img src={configureWeb3Code} alt=""/>
                                     <button
                                         className={"submit btn btn-flat btn-primary float-end " + (!state.web3 ? '' : 'disabled')}
                                         type="button"
