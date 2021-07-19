@@ -1,26 +1,8 @@
 import logo from './logo.svg';
+import web3logo from './images/web3jslogo.png';
 import './App.css';
 import Web3PlayGround from "./blockchain/Web3PlayGround";
 import {useState} from "react";
-
-// Example starter JavaScript for disabling form submissions if there are invalid fields
-(function () {
-    // Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.querySelectorAll('.needs-validation')
-
-    // Loop over them and prevent submission
-    Array.prototype.slice.call(forms)
-        .forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault()
-                    event.stopPropagation()
-                }
-
-                form.classList.add('was-validated')
-            }, false)
-        })
-})()
 
 function App(props) {
     const [state, setState] = useState({
@@ -44,7 +26,10 @@ function App(props) {
             <div className="container">
                 <main>
                     <div className="py-5 text-center">
-                        <img className="d-block mx-auto mb-4" src={logo} alt="" width="72" height="57"/>
+                        <div>
+                            <img className="mx-auto mb-4" src={logo} alt="" width="72" height="57"/>
+                            <img className="mx-auto mb-4" src={web3logo} alt="" width="72" height="57"/>
+                        </div>
                         <h2>Web3js Playground</h2>
                         <p className="lead">Some of functions you will encounter throughout the course, please open browser console for the results</p>
                     </div>
