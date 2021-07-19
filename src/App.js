@@ -206,79 +206,83 @@ function App() {
                                 </code>
                             </div>
                             <hr/>
-                            <form>
-                                <code>
-                                    [initializing a smart contract]
-                                    <br/>
-                                    window.contract = new web3.eth.Contract(
-                                    '<textarea name="contractABI"
-                                               className={'align-middle'}
-                                               rows={1}
-                                               onChange={onChange}
-                                               placeholder={'contract ABI'}
-                                               value={state.contractABI}>
+                            <div>
+                                <form>
+                                    <code>
+                                        [initializing a smart contract]
+                                        <br/>
+                                        window.contract = new web3.eth.Contract(
+                                        '<textarea name="contractABI"
+                                                   className={'align-middle'}
+                                                   rows={1}
+                                                   onChange={onChange}
+                                                   placeholder={'contract ABI'}
+                                                   value={state.contractABI}>
                                     </textarea>',
-                                    '<input onChange={onChange}
-                                            type="text"
-                                            className=""
-                                            name="contractAddress"
-                                            value={state.contractAddress}
-                                            required
-                                            placeholder={"contract address"}/>'
-                                    )
-                                    <button className={"submit btn btn-flat btn-primary float-end " + (state.contractABI && state.contractAddress? '': 'disabled')}
-                                            type="button"
-                                            onClick={() => {
-                                                const ABI = JSON.parse(state.contractABI);
-                                                const contract = new window.web3.eth.Contract(ABI, state.contractAddress)
-                                                window.contract = contract
-                                                console.log(contract);
-                                                console.log("Contract object has been created, type 'contract' in the console to access")
-                                                console.log('===========================================================================')
-                                            }}
-                                            disabled={!state.web3}>Run
-                                    </button>
-                                </code>
-                            </form>
-                            <hr/>
-                            <form>
-                                <code>
-                                    [sending a transaction from metamask, click run on window.web3.eth.currentProvider.selectedAddress first, it will set the fromAddress]
-                                    <br/>
-                                    window.web3.eth.sendTransaction(
-                                    '{state.fromAddress}',
-                                    '<input onChange={onChange}
-                                            type="text"
-                                            className=""
-                                            name="toAddress"
-                                            value={state.toAddress}
-                                            required
-                                            placeholder={"enter recipient address"}/>',
-                                    '<input onChange={onChange}
-                                            type="text"
-                                            className=""
-                                            name="amountToSendInEther"
-                                            value={state.amountToSendInEther}
-                                            required
-                                            placeholder={"enter amount to send in ether"}/>'
-,                                    )
-                                    <button className={"submit btn btn-flat btn-primary float-end " + (state.fromAddress && state.toAddress && state.amountToSendInEther? '': 'disabled')}
-                                            type="button"
-                                            onClick={() => {
-                                                window.web3.eth.sendTransaction({
-                                                    from: state.fromAddress,
-                                                    to: state.toAddress,
-                                                    value: window.web3.utils.toWei(state.amountToSendInEther),
-                                                }).then(console.log);
+                                        '<input onChange={onChange}
+                                                type="text"
+                                                className=""
+                                                name="contractAddress"
+                                                value={state.contractAddress}
+                                                required
+                                                placeholder={"contract address"}/>'
+                                        )
+                                        <button className={"submit btn btn-flat btn-primary float-end " + (state.contractABI && state.contractAddress? '': 'disabled')}
+                                                type="button"
+                                                onClick={() => {
+                                                    const ABI = JSON.parse(state.contractABI);
+                                                    const contract = new window.web3.eth.Contract(ABI, state.contractAddress)
+                                                    window.contract = contract
+                                                    console.log(contract);
+                                                    console.log("Contract object has been created, type 'contract' in the console to access")
+                                                    console.log('===========================================================================')
+                                                }}
+                                                disabled={!state.web3}>Run
+                                        </button>
+                                    </code>
+                                </form>
+                                <hr/>
+                            </div>
+                            <div>
+                                <form>
+                                    <code>
+                                        [sending a transaction from metamask, click run on window.web3.eth.currentProvider.selectedAddress first, it will set the fromAddress]
+                                        <br/>
+                                        window.web3.eth.sendTransaction(
+                                        '{state.fromAddress}',
+                                        '<input onChange={onChange}
+                                                type="text"
+                                                className=""
+                                                name="toAddress"
+                                                value={state.toAddress}
+                                                required
+                                                placeholder={"enter recipient address"}/>',
+                                        '<input onChange={onChange}
+                                                type="text"
+                                                className=""
+                                                name="amountToSendInEther"
+                                                value={state.amountToSendInEther}
+                                                required
+                                                placeholder={"enter amount to send in ether"}/>'
+                                        ,                                    )
+                                        <button className={"submit btn btn-flat btn-primary float-end " + (state.fromAddress && state.toAddress && state.amountToSendInEther? '': 'disabled')}
+                                                type="button"
+                                                onClick={() => {
+                                                    window.web3.eth.sendTransaction({
+                                                        from: state.fromAddress,
+                                                        to: state.toAddress,
+                                                        value: window.web3.utils.toWei(state.amountToSendInEther),
+                                                    }).then(console.log);
 
-                                                console.log("Contract object has been created, type 'contract' in the console to access")
-                                                console.log('===========================================================================')
-                                            }}
-                                            disabled={!state.web3}>Run
-                                    </button>
-                                </code>
-                            </form>
-                            <hr/>
+                                                    console.log("Contract object has been created, type 'contract' in the console to access")
+                                                    console.log('===========================================================================')
+                                                }}
+                                                disabled={!state.web3}>Run
+                                        </button>
+                                    </code>
+                                </form>
+                                <hr/>
+                            </div>
                         </div>
                     </div>
                 </main>
