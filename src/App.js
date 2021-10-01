@@ -15,7 +15,7 @@ function App() {
         amountToSendInEther: '',
         valueInWei: '',
         valueInEther: '',
-        address: '',
+        addressToGetBalance: '',
         contractAddress: '',
         contractABI: '',
     })
@@ -54,8 +54,9 @@ function App() {
                                     <br/>
                                     <img src={configureWeb3Code} alt=""/>
                                     <button
-                                        className={"submit btn btn-flat btn-primary float-end " + (!state.web3 ? '' : 'disabled')}
+                                        className={"submit btn btn-flat btn-primary float-end "}
                                         type="button"
+                                        disabled={state.web3}
                                         onClick={async () => {
                                             // let's expose web3 to the browser
                                             window.web3 = configureWeb3();
@@ -73,14 +74,14 @@ function App() {
                                     [Requests accounts access from metamask/request permission to connect to metamask account]
                                     <br/>
                                     window.web3.eth.requestAccounts()
-                                    <button className="submit btn btn-flat btn-primary float-end"
+                                    <button className={"submit btn btn-flat btn-primary float-end "}
                                             type="submit"
-                                            disabled={!state.web3}
+                                            disabled={!state.web3 || state.connectedAccounts.length}
                                             onClick={async () => {
                                                 window.connectedAccounts = await window.web3.eth.requestAccounts();
                                                 _setState('connectedAccounts', window.connectedAccounts);
                                                 console.log(window.connectedAccounts)
-                                                console.log("Metamask connected")
+                                                console.log("Metamask connected, type window.connectedAccounts to view the accounts")
                                                 console.log('===========================================================================')
                                             }}
                                     >Run</button>
@@ -92,8 +93,9 @@ function App() {
                                     [Shows the currently selected address, please run requestAccounts first if this returns null]
                                     <br/>
                                     window.web3.eth.currentProvider.selectedAddress
-                                    <button className={"submit btn btn-flat btn-primary float-end " + (state.connectedAccounts.length? '': 'disabled')}
+                                    <button className={"submit btn btn-flat btn-primary float-end "}
                                             type="button"
+                                            disabled={!state.web3 || !state.connectedAccounts.length}
                                             onClick={() => {
                                                 window.selectedAddress = window.web3.eth.currentProvider.selectedAddress;
                                                 console.log(window.selectedAddress)
@@ -102,7 +104,7 @@ function App() {
                                                 console.log("Type 'selectedAddress' in the console")
                                                 console.log('===========================================================================')
                                             }}
-                                            disabled={!state.web3}>Run
+                                            >Run
                                     </button>
                                 </code>
                             </div>
@@ -112,23 +114,24 @@ function App() {
                                     <code>
                                         [get the eth balance]
                                         <br/>
-                                        window.web3.eth.balanceOf('
+                                        window.web3.eth.getBalance('
                                         <input onChange={onChange}
                                                type="text"
                                                className=""
-                                               name="address"
-                                               value={state.address}
+                                               name="addressToGetBalance"
+                                               value={state.addressToGetBalance}
                                                required
-                                               placeholder={"address"}/>
+                                               placeholder={"addressToGetBalance"}/>
                                         ')
-                                        <button className={"submit btn btn-flat btn-primary float-end " + (state.address ? '' : 'disabled')}
+                                        <button className={"submit btn btn-flat btn-primary float-end "}
                                                 type="button"
+                                                disabled={!state.web3 || !state.addressToGetBalance}
                                                 onClick={() => {
-                                                    window.web3.eth.getBalance(state.address).then(console.log)
+                                                    window.web3.eth.getBalance(state.addressToGetBalance).then(console.log)
                                                     console.log("This is the balance in wei form, to convert to ")
                                                     console.log('===========================================================================')
                                                 }}
-                                                disabled={!state.web3}>Run
+                                                >Run
                                         </button>
                                     </code>
                                 </form>
